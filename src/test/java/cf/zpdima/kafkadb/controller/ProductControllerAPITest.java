@@ -38,6 +38,7 @@ public class ProductControllerAPITest {
 
     @Test
     public void shouldReturnFullName() throws Exception {
+
         Product product = Product.builder().id(1l).name("product1").description("desc1").remain(10).price(100f).build();
         given(productRepository.findById(1l)).willReturn(Optional.of(product));
 
