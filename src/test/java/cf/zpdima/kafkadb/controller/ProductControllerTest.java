@@ -54,7 +54,7 @@ class ProductControllerTest {
         Product product = Product.builder().id(1l).name("product1").description("desc1").remain(10).price(100f).build();
         given(productRepository.findById(1l)).willReturn(Optional.of(product));
 
-        Optional<Product> optionalProduct = subject.getPrductId(1l);
+        Optional<Product> optionalProduct = Optional.of(subject.getPrductId(1l));
 
 //        Assumptions.assumeFalse(optionalProduct.isPresent());
         assertTrue(optionalProduct.isPresent());
@@ -65,7 +65,7 @@ class ProductControllerTest {
     public void shouldTellIfPersonIsUnknown() throws Exception {
 
         given(productRepository.findById(org.mockito.ArgumentMatchers.anyLong())).willReturn(Optional.empty());
-        Optional<Product> optionalProduct = subject.getPrductId(org.mockito.ArgumentMatchers.anyLong());
+        Optional<Product> optionalProduct = Optional.of(subject.getPrductId(org.mockito.ArgumentMatchers.anyLong()));
         assertTrue(optionalProduct.isEmpty());
     }
 

@@ -1,6 +1,8 @@
 package cf.zpdima.kafkadb.controller;
 
 import cf.zpdima.kafkadb.config.KafkaProducerConfig;
+import cf.zpdima.kafkadb.dto.ProductDto;
+import cf.zpdima.kafkadb.mappers.ProductMapper;
 import cf.zpdima.kafkadb.model.Product;
 import cf.zpdima.kafkadb.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -25,20 +29,32 @@ public class ProductController {
     private KafkaProducerConfig.MessageProducer messageProducer;
 
     @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
     public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
 
     @PostConstruct
-    private void init(){
+    private void init() {
         log.info(" --- init product");
-        Product product = Product.builder().name("product1").description("desc1").remain(10).price(100f).build();
+//        Product product = Product.builder().name("product1").description("desc1").remain(10).price(100f).build();
+//        productRepository.save(product);
+//        product = Product.builder().name("product2").description("desc1").remain(15).price(150f).build();
+//        productRepository.save(product);
+//        product = Product.builder().name("product3").description("desc1").remain(20).price(200f).build();
+//        productRepository.save(product);
+
+
+        Product product = Product.builder().name("1000000").description("desc1").remain(10).price(100f).build();
         productRepository.save(product);
-        product = Product.builder().name("product2").description("desc1").remain(15).price(150f).build();
+        product = Product.builder().name("2000000").description("desc1").remain(15).price(150f).build();
         productRepository.save(product);
-        product = Product.builder().name("product3").description("desc1").remain(20).price(200f).build();
+        product = Product.builder().name("3000000").description("desc1").remain(20).price(200f).build();
         productRepository.save(product);
+
 
     }
 
@@ -51,17 +67,30 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<Product> listAll() {
+    public List<ProductDto> listAll() {
         log.info(" --- request all product");
         List<Product> list = productRepository.findAll();
-        return list;
+
+        List<ProductDto> listDto = list.stream().map(p -> {
+            System.out.println(productMapper.toDto(p));
+            return productMapper.toDto(p);
+        }).collect(Collectors.toList());
+
+        return listDto;
     }
 
+//    @GetMapping("/product")
+//        public Optional<Product> getPrductId(@RequestParam(name = "id") Long id){
+//        Optional<Product> product = productRepository.findById(id);
+//        return product;
+//    }
+
     @GetMapping("/product")
-    public Optional<Product> getPrductId(@RequestParam(name = "id") Long id){
-        Optional<Product> product = productRepository.findById(id);
+    public Product getPrductId(@RequestParam(name = "id") Long id) {
+        Product product = productRepository.findById(id).get();
         return product;
     }
+
 
     @PostMapping("/products")
     Product newEmployee(@RequestBody Product product) {
